@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet(name = "frontCtrlServletV3", urlPatterns = "/front-controller/v3/*")
+@WebServlet(name = "frontCtrlServletV3", urlPatterns = "/front-controller/v2/*")
 public class FrontCtrlServletV3 extends HttpServlet {
 
   private Map<String, ControllerV3> controllerMap = new HashMap<>();
@@ -53,28 +53,16 @@ public class FrontCtrlServletV3 extends HttpServlet {
     // ------------위에까지는 v2랑 똑같
 
     // 여기서 paramMap을 넘겨준다. => parameter 다 꺼내야한다.
-    Map<String, String> paramMap = createParamMap(request);
-    ModelView mv = controller.process(paramMap);
-
-    String viewName = mv.getViewName();
-    System.out.println(viewName + "----------");
-    MyView view = viewResolver(viewName);
-    view.render(mv.getModel(), request, response);
-  }
-
-  private Map<String, String> createParamMap(HttpServletRequest request) {
     Map<String, String> paramMap = new HashMap<>();
-
     request
       .getParameterNames()
       .asIterator()
       .forEachRemaining(paramName ->
         paramMap.put(paramName, request.getParameter(paramName))
       );
-    return paramMap;
-  }
 
-  private MyView viewResolver(String viewName) {
-    return new MyView("/WEB-INF/views/" + viewName + ".jsp");
+    // ------------------파라미터는 이제 됐다.
+
+    ModelView mv = controller.process(paramMap);
   }
 }

@@ -2,11 +2,11 @@ package hello.servlet.web.frontCtrl.v5;
 
 import hello.servlet.web.frontCtrl.ModelView;
 import hello.servlet.web.frontCtrl.MyView;
-import hello.servlet.web.frontCtrl.v3.ControllerV3;
 import hello.servlet.web.frontCtrl.v3.controller.MemberFormControllerV3;
 import hello.servlet.web.frontCtrl.v3.controller.MemberListControllerV3;
 import hello.servlet.web.frontCtrl.v3.controller.MemberSaveControllerV3;
 import hello.servlet.web.frontCtrl.v5.adapter.ControllerV3HandlerAdapter;
+import hello.servlet.web.frontCtrl.v5.adapter.ControllerV4HandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -46,10 +46,25 @@ public class FrontCtrlServletV5 extends HttpServlet {
       "/front-controller/v5/v3/members",
       new MemberListControllerV3()
     );
+
+    // v4 추가 => 어댑터를 넣어줘야 한다.
+    handlerMappingMap.put(
+      "/front-controller/v5/v4/members/new-form",
+      new MemberFormControllerV3()
+    );
+    handlerMappingMap.put(
+      "/front-controller/v5/v4/members/save",
+      new MemberSaveControllerV3()
+    );
+    handlerMappingMap.put(
+      "/front-controller/v5/v4/members",
+      new MemberListControllerV3()
+    );
   }
 
   private void initHandlerAdapters() { // 2번, 핸들러 찾기 => loop를 돌려 찾으면 된다.
     handlerAdapters.add(new ControllerV3HandlerAdapter());
+    handlerAdapters.add(new ControllerV4HandlerAdapter());
   }
 
   @Override

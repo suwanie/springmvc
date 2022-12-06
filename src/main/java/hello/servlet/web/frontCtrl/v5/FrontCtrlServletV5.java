@@ -35,20 +35,20 @@ public class FrontCtrlServletV5 extends HttpServlet {
 
   private void initHandlerMappingMap() {
     handlerMappingMap.put(
-      "/front-controller/v3/members/new-form",
+      "/front-controller/v5/v3/members/new-form",
       new MemberFormControllerV3()
     );
     handlerMappingMap.put(
-      "/front-controller/v3/members/save",
+      "/front-controller/v5/v3/members/save",
       new MemberSaveControllerV3()
     );
     handlerMappingMap.put(
-      "/front-controller/v3/members",
+      "/front-controller/v5/v3/members",
       new MemberListControllerV3()
     );
   }
 
-  private void initHandlerAdapters() {
+  private void initHandlerAdapters() { // 2번, 핸들러 찾기 => loop를 돌려 찾으면 된다.
     handlerAdapters.add(new ControllerV3HandlerAdapter());
   }
 
@@ -64,8 +64,9 @@ public class FrontCtrlServletV5 extends HttpServlet {
       return;
     }
 
-    Map<String, String> paramMap = createParamMap(request);
-    ModelView mv = controller.process(paramMap);
+    MyHandlerAdapter adapter = getHandlerAdapter(handler);
+
+    ModelView mv = adapter.handle(request, response, handler);
 
     String viewName = mv.getViewName();
     MyView view = viewResolver(viewName);
@@ -73,17 +74,25 @@ public class FrontCtrlServletV5 extends HttpServlet {
     view.render(mv.getModel(), request, response);
   }
 
-  private MyView viewResolver(String viewName) {
-    return null;
-  }
-
-  private Map<String, String> createParamMap(HttpServletRequest request) {
-    return null;
+  private MyHandlerAdapter getHandlerAdapter(Object handler) {
+    for (MyHandlerAdapter adapter : handlerAdapters) {
+      if (adapter.supports(handler)) {
+        // 지원하는가? => 여기선 handler를 지원하는가?
+        return adapter;
+      }
+    }
+    throw new IllegalArgumentException(
+      "handler adapter를 찾을 수 없다. => " + handler
+    );
   }
 
   private Object getHandler(HttpServletRequest request) {
     String requestURI = request.getRequestURI();
 
     return handlerMappingMap.get(requestURI);
+  }
+
+  private MyView viewResolver(String viewName) {
+    return new MyView("/WEB-INF/views/" + viewName + ".jsp");
   }
 }

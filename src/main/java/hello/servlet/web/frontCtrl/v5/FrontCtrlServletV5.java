@@ -28,7 +28,7 @@ public class FrontCtrlServletV5 extends HttpServlet {
   private final List<MyHandlerAdapter> handlerAdapters = new ArrayList<>();
 
   public FrontCtrlServletV5() {
-    initHandlerMappingMap(); // public이면 왜 접근을 못하지?
+    initHandlerMappingMap();
 
     initHandlerAdapters();
   }
